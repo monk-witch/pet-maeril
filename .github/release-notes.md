@@ -1,5 +1,9 @@
 Chibi Maeril is a pixel-art companion for the ChatGPT desktop app and Codex CLI.
 
+This maintenance release stabilizes the idle loop, simplifies the failed and
+reviewing reactions, removes duplicate hands from both running directions, and
+cleans stray transparency pixels around the character.
+
 **[Read *Mercy and Wards* free →](https://monkandwitch.com/en/b1/)**
 
 ## Install
