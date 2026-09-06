@@ -1,0 +1,139 @@
+name: Validate and release pet
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Install validation tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes jq webp
+
+      - name: Validate package
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          manifest="package/pet.json"
+          validation="qa/validation.json"
+
+          jq -e '
+            type == "object" and
+            (.id | type == "string" and test("^[a-z0-9]+(-[a-z0-9]+)*$")) and
+            (.displayName | type == "string" and length > 0) and
+            (.description | type == "string" and length > 0) and
+            .spriteVersionNumber == 2 and
+            .spritesheetPath == "spritesheet.webp"
+          ' "$manifest" >/dev/null
+
+          pet_id="$(jq -r '.id' "$manifest")"
+          sprite="package/$(jq -r '.spritesheetPath' "$manifest")"
+
+          test -f "$sprite"
+          test "$pet_id" = "$(jq -r '.petId' "$validation")"
+          jq -e '
+            .manifest.spriteVersionNumber == 2 and
+            .atlas.format == "WebP" and
+            .atlas.lossless == true and
+            .atlas.alpha == true and
+            .atlas.width == 1536 and
+            .atlas.height == 2288 and
+            .atlas.grid.columns == 8 and
+            .atlas.grid.rows == 11 and
+            .atlas.grid.cellWidth == 192 and
+            .atlas.grid.cellHeight == 208 and
+            .atlasValidator.ok == true and
+            .atlasValidator.errors == [] and
+            .atlasValidator.warnings == []
+          ' "$validation" >/dev/null
+
+          test "$(find package -mindepth 1 -maxdepth 1 | wc -l)" -eq 2
+          test "$(find package -mindepth 1 -maxdepth 1 -type f | wc -l)" -eq 2
+
+          actual_manifest_hash="$(sha256sum "$manifest" | cut -d ' ' -f 1)"
+          actual_sprite_hash="$(sha256sum "$sprite" | cut -d ' ' -f 1)"
+          test "$actual_manifest_hash" = "$(jq -r '.manifest.sha256' "$validation")"
+          test "$actual_sprite_hash" = "$(jq -r '.atlas.sha256' "$validation")"
+
+          webp_report="$(webpinfo -summary "$sprite" 2>&1)"
+          grep -Fq "Width: 1536" <<<"$webp_report"
+          grep -Fq "Height: 2288" <<<"$webp_report"
+          grep -Fq "Alpha: 1" <<<"$webp_report"
+          grep -Fq "Format: Lossless" <<<"$webp_report"
+          grep -Fq "No error detected." <<<"$webp_report"
+          dwebp "$sprite" -o /dev/null
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Install release tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes jq zip unzip
+
+      - name: Build deterministic archive
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          export TZ=UTC
+          pet_id="$(jq -r '.id' package/pet.json)"
+          display_name="$(jq -r '.displayName' package/pet.json)"
+          version="${GITHUB_REF_NAME}"
+          staging="${RUNNER_TEMP}/pet-release"
+          archive="${pet_id}-desktop-${version}.zip"
+
+          mkdir -p "$staging/$pet_id"
+          chmod 0755 "$staging/$pet_id"
+          install -m 0644 package/pet.json "$staging/$pet_id/pet.json"
+          install -m 0644 package/spritesheet.webp "$staging/$pet_id/spritesheet.webp"
+          touch -t 198001010000 "$staging/$pet_id" "$staging/$pet_id/pet.json" "$staging/$pet_id/spritesheet.webp"
+
+          (
+            cd "$staging"
+            printf '%s\n' \
+              "$pet_id/" \
+              "$pet_id/pet.json" \
+              "$pet_id/spritesheet.webp" \
+              | zip -X -q "$GITHUB_WORKSPACE/$archive" -@
+          )
+
+          expected_entries="$(printf '%s\n' "$pet_id/" "$pet_id/pet.json" "$pet_id/spritesheet.webp")"
+          test "$(unzip -Z1 "$archive")" = "$expected_entries"
+          sha256sum "$archive" > SHA256SUMS.txt
+
+          printf 'archive=%s\n' "$archive" >> "$GITHUB_ENV"
+          printf 'display_name=%s\n' "$display_name" >> "$GITHUB_ENV"
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            "$archive" \
+            SHA256SUMS.txt \
+            --title "$display_name $GITHUB_REF_NAME" \
+            --notes-file .github/release-notes.md

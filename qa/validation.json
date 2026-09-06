@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "petId": "chibi-maeril",
+  "manifest": {
+    "path": "package/pet.json",
+    "spriteVersionNumber": 2,
+    "sha256": "23864c9f5eab13dc43edcc14b33de5f5ebe91bb8d14adcb2eaa04eeabaed7704"
+  },
+  "atlas": {
+    "path": "package/spritesheet.webp",
+    "sha256": "9339505a148a8c8a89a92c03936d34291cc765c006d571cf95dc7bd52d28590a",
+    "format": "WebP",
+    "lossless": true,
+    "alpha": true,
+    "width": 1536,
+    "height": 2288,
+    "grid": {
+      "columns": 8,
+      "rows": 11,
+      "cellWidth": 192,
+      "cellHeight": 208
+    }
+  },
+  "atlasValidator": {
+    "ok": true,
+    "errors": [],
+    "warnings": []
+  },
+  "visualReview": {
+    "status": "accepted",
+    "summary": "Nine standard animation states and sixteen look directions were reviewed. All cardinal directions passed three blind checks. The creator tested and accepted this build in the desktop app for v1.0.0.",
+    "notes": [
+      "Some intermediate gaze directions are subtle in isolated frames.",
+      "A mild change in volume at the upward loop transition was accepted during visual review."
+    ]
+  }
+}
