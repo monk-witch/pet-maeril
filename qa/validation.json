@@ -8,7 +8,7 @@
   },
   "atlas": {
     "path": "package/spritesheet.webp",
-    "sha256": "9339505a148a8c8a89a92c03936d34291cc765c006d571cf95dc7bd52d28590a",
+    "sha256": "65a449906bbe3cca8779cb6dbe38bc84587e372466ee0d6b75d2d3a927f3680e",
     "format": "WebP",
     "lossless": true,
     "alpha": true,
@@ -19,7 +19,8 @@
       "rows": 11,
       "cellWidth": 192,
       "cellHeight": 208
-    }
+    },
+    "transparentRgbResiduePixels": 0
   },
   "atlasValidator": {
     "ok": true,
@@ -28,10 +29,12 @@
   },
   "visualReview": {
     "status": "accepted",
-    "summary": "Nine standard animation states and sixteen look directions were reviewed. All cardinal directions passed three blind checks. The creator tested and accepted this build in the desktop app for v1.0.0.",
+    "summary": "The creator approved the v1.0.1 animation-maintenance build after reviewing numbered frame grids, timed GIFs, and light, dark, and checkerboard transparency previews.",
     "notes": [
-      "Some intermediate gaze directions are subtle in isolated frames.",
-      "A mild change in volume at the upward loop transition was accepted during visual review."
+      "Idle uses one canonical body with a native-pixel blink, eliminating full-body flicker.",
+      "Failed holds one disappointed pose; reviewing holds one hand-on-chin pose with a native-pixel blink.",
+      "Duplicate lower hands were removed from both running directions while retaining the forward fist and cuff-connected rear hand.",
+      "Detached extraction debris was removed across the atlas; unused cells and transparent RGB residue remain clear."
     ]
   }
 }

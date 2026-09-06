@@ -58,6 +58,7 @@ jobs:
             .atlas.grid.rows == 11 and
             .atlas.grid.cellWidth == 192 and
             .atlas.grid.cellHeight == 208 and
+            .atlas.transparentRgbResiduePixels == 0 and
             .atlasValidator.ok == true and
             .atlasValidator.errors == [] and
             .atlasValidator.warnings == []
