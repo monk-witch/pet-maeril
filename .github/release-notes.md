@@ -1,6 +1,8 @@
 Chibi Maeril is a pixel-art companion for the ChatGPT desktop app and Codex CLI.
 
-Version 1.1.0 refreshes Maeril's four-frame greeting animation. Her raised right
+Version 1.1.1 packages Maeril's corrected four-frame greeting as a patch release.
+The runtime files are unchanged from v1.1.0; this release updates the version
+metadata and retains the validated animation repair. Her raised right
 arm now has a clean silhouette, with the stray hanging sleeve behind her removed.
 The regenerated poses retain her pixel-art appearance and are reviewed at desktop
 size on light and dark backgrounds. The other animation states and all sixteen
