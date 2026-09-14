@@ -8,7 +8,7 @@
   },
   "atlas": {
     "path": "package/spritesheet.webp",
-    "sha256": "65a449906bbe3cca8779cb6dbe38bc84587e372466ee0d6b75d2d3a927f3680e",
+    "sha256": "3a7501d6cb8e5b852f2d5d3a148cd58d5fc8bff3c3b50cf0e606788b7b64e372",
     "format": "WebP",
     "lossless": true,
     "alpha": true,
@@ -29,12 +29,51 @@
   },
   "visualReview": {
     "status": "accepted",
-    "summary": "The creator approved the v1.0.1 animation-maintenance build after reviewing numbered frame grids, timed GIFs, and light, dark, and checkerboard transparency previews.",
+    "reviewedBy": "Independent visual QA agent and primary agent",
+    "summary": "The complete regenerated waving row removes the duplicate lowered sleeve from the raised-arm poses while retaining Maeril's identity and a steady desktop-size greeting loop.",
     "notes": [
-      "Idle uses one canonical body with a native-pixel blink, eliminating full-body flicker.",
-      "Failed holds one disappointed pose; reviewing holds one hand-on-chin pose with a native-pixel blink.",
-      "Duplicate lower hands were removed from both running directions while retaining the forward fist and cuff-connected rear hand.",
-      "Detached extraction debris was removed across the atlas; unused cells and transparent RGB residue remain clear."
+      "Both raised-arm frames show exactly one raised screen-left arm and one resting screen-right arm; no extra sleeve remains behind the screen-left hip.",
+      "The two raised-hand poses have a visible hand-angle change, with stable torso and foot placement.",
+      "Reviewed at 192 by 208 pixels on dark, light, and blue-gray backgrounds, plus a timed animated comparison.",
+      "No opaque white holes, shadows, or stray debris were visible.",
+      "Accepted minor differences: cleaner outlines, slightly warmer gold details, and small head/robe contour changes. The independent review found no conspicuous identity, style, or color pop from idle.",
+      "All other animation rows and sixteen look directions retain their exact v1.0.1 decoded pixels."
     ]
+  },
+  "release": {
+    "version": "1.1.0",
+    "date": "2026-09-14",
+    "generation": "OpenAI built-in image generator",
+    "changedRows": [
+      3
+    ],
+    "unchangedRows": [
+      0,
+      1,
+      2,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "referenceVersion": "1.0.1",
+    "referenceAtlasSha256": "65a449906bbe3cca8779cb6dbe38bc84587e372466ee0d6b75d2d3a927f3680e",
+    "reviewSheet": "qa/waving-review.png",
+    "frameDurationsMs": [
+      140,
+      140,
+      140,
+      280
+    ]
+  },
+  "edgeCleanup": {
+    "ok": true,
+    "algorithm": "edge-local-chroma-spill-suppression",
+    "alpha_preserved": true,
+    "rejected_pixels": 0,
+    "scope": "Single cleanup pass; only the regenerated waving row is retained. All other rows preserve their v1.0.1 decoded pixels."
   }
 }
